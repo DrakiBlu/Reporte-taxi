@@ -1,5 +1,5 @@
 """
-Genera los íconos PNG del taxi para todas las densidades de Android.
+Genera los íconos PNG del taxi (Frontal Material) para todas las densidades de Android.
 Se ejecuta en GitHub Actions antes de compilar el APK.
 """
 from PIL import Image, ImageDraw
@@ -14,83 +14,56 @@ SIZES = {
 }
 
 def draw_taxi_icon(size):
-    s = size / 192.0
+    scale = size / 108.0
 
-    # Fondo azul marino #003366
-    img = Image.new('RGBA', (size, size), (0, 51, 102, 255))
+    # Lienzo transparente
+    img = Image.new('RGBA', (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
 
-    # ── Cabina (trapecio amarillo) ──
-    cabin = [
-        (int(45*s), int(100*s)),
-        (int(55*s), int(58*s)),
-        (int(137*s), int(58*s)),
-        (int(147*s), int(100*s)),
-    ]
-    d.polygon(cabin, fill=(255, 215, 0))
+    # Fondo circular azul marino (#003366) 
+    d.ellipse([4*scale, 4*scale, 104*scale, 104*scale], fill=(0, 51, 102))
 
-    # ── Letrero blanco en el techo ──
-    d.rounded_rectangle(
-        [int(74*s), int(27*s), int(118*s), int(48*s)],
-        radius=max(1, int(5*s)),
-        fill=(255, 255, 255)
-    )
+    # Ruedas oscuras (#222222)
+    radius3 = max(1, int(3*scale))
+    d.rounded_rectangle([30*scale, 72*scale, 40*scale, 84*scale], radius=radius3, fill=(34, 34, 34))
+    d.rounded_rectangle([68*scale, 72*scale, 78*scale, 84*scale], radius=radius3, fill=(34, 34, 34))
 
-    # ── Ventana izquierda (azul oscuro) ──
-    lw = [
-        (int(56*s), int(98*s)),
-        (int(60*s), int(65*s)),
-        (int(91*s), int(65*s)),
-        (int(89*s), int(98*s)),
-    ]
-    d.polygon(lw, fill=(26, 74, 138))
+    # Cabina superior (#FFC107)
+    d.polygon([(38*scale, 36*scale), (70*scale, 36*scale), (78*scale, 50*scale), (30*scale, 50*scale)], fill=(255, 193, 7))
 
-    # ── Ventana derecha (azul oscuro) ──
-    rw = [
-        (int(136*s), int(98*s)),
-        (int(132*s), int(65*s)),
-        (int(101*s), int(65*s)),
-        (int(103*s), int(98*s)),
-    ]
-    d.polygon(rw, fill=(26, 74, 138))
+    # Cuerpo base (#FFD700)
+    radius8 = max(1, int(8*scale))
+    d.rounded_rectangle([26*scale, 50*scale, 82*scale, 70*scale], radius=radius8, fill=(255, 215, 0))
 
-    # ── Franja amarilla oscura ──
-    d.rectangle(
-        [int(18*s), int(95*s), int(174*s), int(108*s)],
-        fill=(249, 168, 37)
-    )
+    # Parabrisas (#1A4A8A)
+    d.polygon([(40*scale, 39*scale), (68*scale, 39*scale), (74*scale, 48*scale), (34*scale, 48*scale)], fill=(26, 74, 138))
 
-    # ── Cuerpo inferior (amarillo) ──
-    d.rounded_rectangle(
-        [int(18*s), int(100*s), int(174*s), int(158*s)],
-        radius=max(1, int(9*s)),
-        fill=(255, 215, 0)
-    )
+    # Reflejo parabrisas (#4D7BB0) para dar profundidad
+    d.polygon([(42*scale, 40*scale), (60*scale, 40*scale), (63*scale, 45*scale), (37*scale, 45*scale)], fill=(77, 123, 176))
 
-    # ── Ruedas ──
-    for cx in [int(57*s), int(135*s)]:
-        cy = int(158*s)
-        # Neumático
-        r = int(19*s)
-        d.ellipse([cx-r, cy-r, cx+r, cy+r], fill=(34, 34, 34))
-        # Aro
-        r2 = int(8*s)
-        d.ellipse([cx-r2, cy-r2, cx+r2, cy+r2], fill=(180, 180, 180))
+    # Letrero de TAXI blanco en techo
+    radius2 = max(1, int(2*scale))
+    d.rounded_rectangle([46*scale, 28*scale, 62*scale, 34*scale], radius=radius2, fill=(255, 255, 255))
+    d.rectangle([50*scale, 30*scale, 58*scale, 32*scale], fill=(51, 51, 51))
 
-    # ── Faro delantero (blanco-amarillo) ──
-    d.ellipse(
-        [int(154*s), int(112*s), int(172*s), int(126*s)],
-        fill=(255, 255, 200)
-    )
+    # Franja a cuadros (simulada)
+    d.rectangle([20*scale, 58*scale, 88*scale, 62*scale], fill=(51, 51, 51))
+    for x in range(24, 84, 8):
+        d.rectangle([x*scale, 58*scale, (x+4)*scale, 62*scale], fill=(255, 255, 255))
 
-    # ── Luz trasera (roja) ──
-    d.ellipse(
-        [int(20*s), int(112*s), int(38*s), int(126*s)],
-        fill=(204, 0, 0)
-    )
+    # Faros principales (blancos)
+    d.ellipse([26*scale, 61*scale, 34*scale, 69*scale], fill=(255, 255, 255))
+    d.ellipse([74*scale, 61*scale, 82*scale, 69*scale], fill=(255, 255, 255))
+
+    # Parrilla central
+    radius1 = max(1, int(1*scale))
+    d.rounded_rectangle([46*scale, 65*scale, 62*scale, 71*scale], radius=radius1, fill=(51, 51, 51))
+
+    # Luces intermitentes / direccionales (naranjas)
+    d.ellipse([20*scale, 63*scale, 24*scale, 67*scale], fill=(255, 152, 0))
+    d.ellipse([84*scale, 63*scale, 88*scale, 67*scale], fill=(255, 152, 0))
 
     return img
-
 
 base = 'android/app/src/main/res'
 for folder, size in SIZES.items():
@@ -99,6 +72,6 @@ for folder, size in SIZES.items():
     img = draw_taxi_icon(size)
     for name in ['ic_launcher.png', 'ic_launcher_round.png', 'ic_launcher_foreground.png']:
         img.save(os.path.join(path, name))
-    print(f'  {size}x{size}px → {folder}')
+    print(f'  {size}x{size}px -> {folder}')
 
-print('✓ Todos los íconos generados.')
+print('Nuevos iconos frontales premium generados.')

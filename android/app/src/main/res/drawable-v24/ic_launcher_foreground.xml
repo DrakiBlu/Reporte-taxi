@@ -3,50 +3,37 @@
     android:height="108dp"
     android:viewportHeight="108"
     android:viewportWidth="108">
-    <!-- Ruedas (se dibujan primero, quedan detrás) -->
-    <path
-        android:fillColor="#222222"
-        android:pathData="M34,82 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"/>
-    <path
-        android:fillColor="#222222"
-        android:pathData="M74,82 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"/>
-    <!-- Cuerpo inferior del taxi (amarillo) -->
-    <path
-        android:fillColor="#FFD700"
-        android:pathData="M16,62 L16,82 Q16,87 21,87 L87,87 Q92,87 92,82 L92,62 Z"/>
-    <!-- Cabina del taxi (amarillo) -->
-    <path
-        android:fillColor="#FFD700"
-        android:pathData="M24,42 Q28,35 38,33 L70,33 Q80,35 84,42 L90,62 L18,62 Z"/>
-    <!-- Letrero en el techo (blanco) -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M40,23 Q40,19 44,19 L64,19 Q68,19 68,23 L68,33 L40,33 Z"/>
-    <!-- Ventana izquierda (azul oscuro) -->
-    <path
-        android:fillColor="#003366"
-        android:pathData="M28,44 Q30,39 36,37 L51,37 L49,59 L24,59 Z"/>
-    <!-- Ventana derecha (azul oscuro) -->
-    <path
-        android:fillColor="#003366"
-        android:pathData="M80,44 Q78,39 72,37 L57,37 L59,59 L84,59 Z"/>
-    <!-- Franja amarilla divisoria -->
-    <path
-        android:fillColor="#F9A825"
-        android:pathData="M16,59 L92,59 L92,65 L16,65 Z"/>
-    <!-- Faro delantero (blanco) -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M84,67 L92,67 L92,77 Q84,78 84,71 Z"/>
-    <!-- Calavera trasera (roja) -->
-    <path
-        android:fillColor="#CC0000"
-        android:pathData="M16,67 L24,67 Q24,78 16,77 Z"/>
-    <!-- Aros de ruedas (gris claro) -->
-    <path
-        android:fillColor="#CCCCCC"
-        android:pathData="M34,82 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0"/>
-    <path
-        android:fillColor="#CCCCCC"
-        android:pathData="M74,82 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0"/>
+    
+    <!-- Ruedas -->
+    <path android:fillColor="#222222" android:pathData="M30,72 h10 v8 a4,4 0 0 1 -4,4 h-2 a4,4 0 0 1 -4,-4 z" />
+    <path android:fillColor="#222222" android:pathData="M68,72 h10 v8 a4,4 0 0 1 -4,4 h-2 a4,4 0 0 1 -4,-4 z" />
+
+    <!-- Cabina (arriba) -->
+    <path android:fillColor="#FFC107" android:pathData="M38,36 L70,36 L78,50 L30,50 Z" />
+
+    <!-- Cuerpo (abajo) -->
+    <path android:fillColor="#FFD700" android:pathData="M26,50 h56 a8,8 0 0 1 8,8 v12 a8,8 0 0 1 -8,8 h-56 a8,8 0 0 1 -8,-8 v-12 a8,8 0 0 1 8,-8 z" />
+
+    <!-- Parabrisas -->
+    <path android:fillColor="#1A4A8A" android:pathData="M40,39 L68,39 L74,48 L34,48 Z" />
+    <path android:fillColor="#4D7BB0" android:pathData="M42,40 L60,40 L63,45 L37,45 Z" />
+
+    <!-- Letrero Techo -->
+    <path android:fillColor="#FFFFFF" android:pathData="M46,28 h16 a2,2 0 0 1 2,2 v4 h-20 v-4 a2,2 0 0 1 2,-2 z" />
+    <path android:fillColor="#333333" android:pathData="M50,30 h8 v2 h-8 z" />
+
+    <!-- Franja cuadros -->
+    <path android:fillColor="#333333" android:pathData="M20,58 h68 v4 h-68 z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M24,58 h4 v4 h-4 z M32,58 h4 v4 h-4 z M40,58 h4 v4 h-4 z M48,58 h4 v4 h-4 z M56,58 h4 v4 h-4 z M64,58 h4 v4 h-4 z M72,58 h4 v4 h-4 z M80,58 h4 v4 h-4 z" />
+
+    <!-- Faros -->
+    <path android:fillColor="#FFFFFF" android:pathData="M30,65 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M78,65 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+
+    <!-- Parrilla -->
+    <path android:fillColor="#333333" android:pathData="M46,65 h16 v6 h-16 z" />
+
+    <!-- Intermitentes -->
+    <path android:fillColor="#FF9800" android:pathData="M22,65 m-2,0 a2,2 0 1,1 4,0 a2,2 0 1,1 -4,0" />
+    <path android:fillColor="#FF9800" android:pathData="M86,65 m-2,0 a2,2 0 1,1 4,0 a2,2 0 1,1 -4,0" />
 </vector>
