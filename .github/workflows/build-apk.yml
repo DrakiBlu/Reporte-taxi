@@ -36,13 +36,19 @@ jobs:
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      # 6. Dar permisos y arreglar line endings del Gradle wrapper
+      # 6. Generar íconos PNG del taxi para todas las densidades
+      - name: Generar íconos PNG
+        run: |
+          pip install Pillow --quiet
+          python generate_icons.py
+
+      # 7. Dar permisos y arreglar line endings del Gradle wrapper
       - name: Preparar Gradle wrapper
         run: |
           sed -i 's/\r$//' android/gradlew
           chmod +x android/gradlew
 
-      # 7. Compilar APK debug
+      # 8. Compilar APK debug
       - name: Compilar APK debug
         run: |
           cd android
