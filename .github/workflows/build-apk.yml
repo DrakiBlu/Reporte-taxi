@@ -36,16 +36,18 @@ jobs:
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
-      # 6. Dar permisos al Gradle wrapper
-      - name: Permisos Gradle
-        run: chmod +x android/gradlew
+      # 6. Dar permisos y arreglar line endings del Gradle wrapper
+      - name: Preparar Gradle wrapper
+        run: |
+          sed -i 's/\r$//' android/gradlew
+          chmod +x android/gradlew
 
       # 7. Compilar APK debug
       - name: Compilar APK debug
         run: |
           cd android
           ./gradlew assembleDebug --no-daemon \
-            -Dorg.gradle.jvmargs="-Xmx1g -XX:MaxMetaspaceSize=512m"
+            -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
 
       # 8. Subir el APK como artefacto descargable
       - name: Subir APK
