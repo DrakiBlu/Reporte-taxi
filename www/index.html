@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Generador de Reporte</title>
+    <style>
+        :root {
+            --primary: #003366;
+            --accent:  #e6b800;
+            --bg:      #f0f2f5;
+            --danger:  #cc0000;
+            --green:   #25D366;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            padding-bottom: 30px;
+        }
+
+        /* ── HEADER ── */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+        .app-header .btn-back {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #333;
+            padding: 0 12px 0 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .app-header h1 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #222;
+        }
+
+        /* ── CONTENEDOR ── */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* ── TARJETA ── */
+        .card {
+            background: white;
+            padding: 18px 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: uppercase;
+            border-bottom: 2.5px solid var(--accent);
+            padding-bottom: 8px;
+            margin-bottom: 4px;
+        }
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        /* ── FORM ── */
+        .form-group { margin-bottom: 14px; }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 0.88rem;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"] {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.97rem;
+            color: #333;
+            background: white;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--primary); outline: none; }
+
+        /* ── Botón de Fecha ── */
+        .btn-fecha {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.97rem;
+            color: #333;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: border-color 0.2s, background 0.15s;
+            font-family: Arial, sans-serif;
+        }
+        .btn-fecha:active {
+            background: #f0f4ff;
+            border-color: var(--primary);
+        }
+        .btn-fecha span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+        .btn-fecha span:last-child  { flex: 1; }
+
+        /* ── CONTADORES +/- ── */
+        .counters-label {
+            font-weight: bold;
+            font-size: 0.88rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .counter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .counter-row label {
+            width: 72px;
+            margin-bottom: 0;
+            font-size: 0.87rem;
+            color: #444;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .btn-counter {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.15s;
+            line-height: 1;
+            padding: 0;
+        }
+        .btn-counter:active { background: #002244; }
+        .counter-value {
+            flex: 1;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            padding: 10px 6px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* ── HORA DE REGRESO ── */
+        .input-with-btn {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .input-with-btn input {
+            flex: 1;
+            min-width: 0;
+        }
+        .btn-clock {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.15s;
+        }
+        .btn-clock:active { background: #002244; }
+
+        /* Input time invisible */
+        #reloj-oculto {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0; height: 0;
+        }
+
+        /* ── BUSCADOR DESTINO ── */
+        .search-wrapper { position: relative; }
+        .search-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 2px);
+            left: 0; right: 0;
+            background: white;
+            border: 1.5px solid #ddd;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.13);
+            z-index: 999;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .search-dropdown.open { display: block; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            cursor: pointer;
+            font-size: 0.93rem;
+            color: #222;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.12s;
+        }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover,
+        .dropdown-item.active { background: #f0f4ff; }
+        .dropdown-item .icon { font-size: 0.85rem; color: #999; flex-shrink: 0; }
+        .dropdown-item .text { flex: 1; }
+        .dropdown-item .text mark { background: none; color: var(--primary); font-weight: bold; }
+        .dropdown-item .btn-del {
+            background: none; border: none; color: #bbb;
+            cursor: pointer; font-size: 0.9rem; padding: 2px 5px;
+            border-radius: 4px; flex-shrink: 0;
+        }
+        .dropdown-item .btn-del:hover { color: var(--danger); background: #fff0f0; }
+        .dropdown-empty {
+            padding: 12px 14px; color: #aaa;
+            font-size: 0.86rem; text-align: center;
+        }
+
+        /* ── BOTONES PRINCIPALES ── */
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-direction: column;
+        }
+        .btn-main {
+            width: 100%;
+            padding: 15px;
+            font-size: 0.97rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-main:active { opacity: 0.85; transform: scale(0.98); }
+        .btn-reset    { background: var(--danger); color: white; }
+        .btn-copy     { background: var(--primary); color: white; }
+        .btn-whatsapp { background: var(--green);   color: white; }
+
+        /* ── PREVIEW y NOTIFICACIÓN ── */
+        .preview {
+            background: #eee;
+            padding: 15px;
+            margin-top: 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.82rem;
+            display: none;
+            border: 1px dashed #aaa;
+            color: #333;
+        }
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 11px 24px;
+            border-radius: 24px;
+            display: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="app-header">
+    <h1>Generador de Reporte</h1>
+</div>
+
+<div class="container">
+
+    <!-- ═══════════════════════════════ -->
+    <!--      TARJETA A: DATOS DEL VIAJE -->
+    <!-- ═══════════════════════════════ -->
+    <div class="card">
+        <div class="card-title">🗓️ Datos del Viaje</div>
+        <div class="card-subtitle">Información del recorrido</div>
+
+        <div class="form-group">
+            <label>Fecha del Viaje:</label>
+            <button type="button" class="btn-fecha" id="btn-fecha" onclick="abrirCalendario()">
+                <span>&#128197;</span>
+                <span id="btn-fecha-texto">Seleccionar fecha</span>
+            </button>
+            <input type="date" id="fecha" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;">
+        </div>
+
+        <div class="form-group">
+            <label>Hora de Salida:</label>
+            <button type="button" class="btn-fecha" id="btn-hora" onclick="abrirRelojSalida()">
+                <span>&#128336;</span>
+                <span id="btn-hora-texto">Seleccionar hora</span>
+            </button>
+            <input type="time" id="hora" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;">
+        </div>
+
+        <div class="form-group">
+            <label>Destino:</label>
+            <div class="search-wrapper" id="destino-wrapper">
+                <input type="text" id="destino"
+                       placeholder="Escribe para buscar..." autocomplete="off">
+                <div class="search-dropdown" id="destino-dropdown"></div>
+            </div>
+        </div>
+
+        <!-- CONTADORES DE PASAJEROS -->
+        <div class="form-group">
+            <div class="counters-label">Usuarios (Pasajeros):</div>
+
+            <div class="counter-row">
+                <label>Menores:</label>
+                <button class="btn-counter" onclick="cambiarContador('menores', -1)">−</button>
+                <div class="counter-value" id="val-menores">0</div>
+                <button class="btn-counter" onclick="cambiarContador('menores', 1)">+</button>
+            </div>
+
+            <div class="counter-row">
+                <label>Adultos:</label>
+                <button class="btn-counter" onclick="cambiarContador('adultos', -1)">−</button>
+                <div class="counter-value" id="val-adultos">0</div>
+                <button class="btn-counter" onclick="cambiarContador('adultos', 1)">+</button>
+            </div>
+
+            <div class="counter-row">
+                <label>Mayores:</label>
+                <button class="btn-counter" onclick="cambiarContador('mayores', -1)">−</button>
+                <div class="counter-value" id="val-mayores">0</div>
+                <button class="btn-counter" onclick="cambiarContador('mayores', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Hora de Regreso:</label>
+            <div class="input-with-btn">
+                <input type="text" id="regreso"
+                       value="Al finalizar actividades"
+                       placeholder="Ej. Al finalizar actividades">
+                <button class="btn-clock" onclick="abrirRelojRegreso()" title="Elegir hora">🕐</button>
+            </div>
+            <input type="time" id="reloj-oculto" value="17:00">
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════ -->
+    <!--   TARJETA B: DATOS DEL CHOFER/TAXI  -->
+    <!-- ════════════════════════════════════ -->
+    <div class="card">
+        <div class="card-title">🚕 Datos del Chofer y Taxi</div>
+        <div class="card-subtitle">Información del vehículo y conductor</div>
+
+        <div class="form-group">
+            <label>Municipio (Salida):</label>
+            <input type="text" id="municipio" list="list-municipio"
+                   placeholder="">
+            <datalist id="list-municipio">
+                <option value="Vega de Alatorre"></option>
+                <option value="Misantla"></option>
+                <option value="Nautla"></option>
+                <option value="Martínez de la Torre"></option>
+                <option value="Colipa"></option>
+                <option value="Juchique de Ferrer"></option>
+            </datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Localidad:</label>
+            <input type="text" id="localidad" list="list-localidad"
+                   placeholder="">
+            <datalist id="list-localidad"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Conductor:</label>
+            <input type="text" id="conductor" list="list-conductor"
+                   placeholder="">
+            <datalist id="list-conductor"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Taxi No:</label>
+            <input type="number" id="taxi" list="list-taxi">
+            <datalist id="list-taxi"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Placas:</label>
+            <input type="text" id="placas" list="list-placas">
+            <datalist id="list-placas"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Marca:</label>
+            <input type="text" id="marca" list="list-marca" placeholder="">
+            <datalist id="list-marca"></datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo:</label>
+            <input type="text" id="tipo" list="list-tipo" placeholder="">
+            <datalist id="list-tipo"></datalist>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn-main btn-reset"    onclick="limpiarFormulario()">BORRAR</button>
+            <button class="btn-main btn-copy"     onclick="copiarReporte()">COPIAR</button>
+            <button class="btn-main btn-whatsapp" onclick="enviarWhatsApp()">WHATSAPP</button>
+        </div>
+
+        <div id="preview-area" class="preview"></div>
+    </div>
+
+</div>
+
+<div id="notification" class="notification">¡Reporte Copiado! ✓</div>
+
+<script>
+// ─── Campos de texto ───
+const inputs = [
+    'fecha', 'hora', 'municipio', 'localidad',
+    'conductor', 'taxi', 'placas', 'marca', 'tipo', 'regreso'
+];
+
+// ─── Contadores de pasajeros ───
+const contadores = { menores: 0, adultos: 0, mayores: 0 };
+
+function cambiarContador(tipo, delta) {
+    contadores[tipo] = Math.max(0, contadores[tipo] + delta);
+    document.getElementById('val-' + tipo).textContent = contadores[tipo];
+    localStorage.setItem('stucv_' + tipo, contadores[tipo]);
+}
+function cargarContadores() {
+    ['menores','adultos','mayores'].forEach(t => {
+        const saved = localStorage.getItem('stucv_' + t);
+        if (saved !== null) {
+            contadores[t] = parseInt(saved) || 0;
+            document.getElementById('val-' + t).textContent = contadores[t];
+        }
+    });
+}
+function totalUsuarios() {
+    return contadores.menores + contadores.adultos + contadores.mayores;
+}
+
+// ════════════════════════════════════════════════
+//   HORA DE REGRESO
+// ════════════════════════════════════════════════
+const regresoInput = document.getElementById('regreso');
+const relojOculto  = document.getElementById('reloj-oculto');
+
+function abrirRelojRegreso() {
+    relojOculto.showPicker ? relojOculto.showPicker() : relojOculto.click();
+}
+
+relojOculto.addEventListener('change', function () {
+    if (!this.value) return;
+    const [hh, mm] = this.value.split(':');
+    const h    = parseInt(hh);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12  = h % 12 || 12;
+    const horaTexto = `${h12}:${mm} ${ampm}`;
+    regresoInput.value = horaTexto;
+    localStorage.setItem('stucv_regreso', horaTexto);
+    regresoInput.focus();
+});
+
+regresoInput.addEventListener('input', function () {
+    localStorage.setItem('stucv_regreso', this.value);
+});
+
+// ════════════════════════════════════════════════
+//   BUSCADOR DE DESTINO TIPO GOOGLE
+// ════════════════════════════════════════════════
+const DESTINOS_BASE = ['MISANTLA', 'XALAPA', 'VERACRUZ', 'CARDEL'];
+const DESTINO_KEY   = 'busqueda_destino';
+const MAX_HISTORIAL = 20;
+
+const destinoInput    = document.getElementById('destino');
+const destinoDropdown = document.getElementById('destino-dropdown');
+let activeIndex = -1;
+
+function getHistorialDestino() {
+    return JSON.parse(localStorage.getItem(DESTINO_KEY)) || [];
+}
+function saveHistorialDestino(h) {
+    localStorage.setItem(DESTINO_KEY, JSON.stringify(h));
+}
+function guardarDestino(valor) {
+    if (!valor || !valor.trim()) return;
+    const val = valor.trim().toUpperCase();
+    let h = getHistorialDestino().filter(i => i.toUpperCase() !== val);
+    h.unshift(val);
+    if (h.length > MAX_HISTORIAL) h = h.slice(0, MAX_HISTORIAL);
+    saveHistorialDestino(h);
+}
+function eliminarDestino(valor, e) {
+    e.stopPropagation();
+    let h = getHistorialDestino().filter(i => i.toUpperCase() !== valor.toUpperCase());
+    saveHistorialDestino(h);
+    renderDropdown(destinoInput.value);
+}
+function resaltar(texto, query) {
+    if (!query) return texto;
+    const idx = texto.toUpperCase().indexOf(query.toUpperCase());
+    if (idx === -1) return texto;
+    return texto.slice(0, idx)
+        + '<mark>' + texto.slice(idx, idx + query.length) + '</mark>'
+        + texto.slice(idx + query.length);
+}
+function renderDropdown(query) {
+    const historial = getHistorialDestino();
+    const q = (query || '').trim().toUpperCase();
+    const histFiltrado   = q ? historial.filter(i => i.includes(q)) : historial;
+    const basesFiltradas = DESTINOS_BASE.filter(b =>
+        (!q || b.includes(q)) &&
+        !historial.some(h => h.toUpperCase() === b.toUpperCase())
+    );
+    const resultados = [...histFiltrado, ...basesFiltradas];
+
+    activeIndex = -1;
+    destinoDropdown.innerHTML = '';
+
+    if (!resultados.length) {
+        destinoDropdown.innerHTML = q
+            ? `<div class="dropdown-empty">Presiona Enter para guardar "<strong>${q}</strong>"</div>`
+            : `<div class="dropdown-empty">Sin resultados</div>`;
+        destinoDropdown.classList.add('open');
+        return;
+    }
+    resultados.forEach(valor => {
+        const esHistorial = historial.some(h => h.toUpperCase() === valor.toUpperCase());
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.innerHTML = `
+            <span class="icon">${esHistorial ? '🕐' : '📍'}</span>
+            <span class="text">${resaltar(valor, query)}</span>
+            ${esHistorial
+                ? `<button class="btn-del"
+                       onmousedown="eliminarDestino('${valor}', event)"
+                       title="Eliminar">✕</button>`
+                : ''}`;
+        item.addEventListener('mousedown', () => seleccionarDestino(valor));
+        destinoDropdown.appendChild(item);
+    });
+    destinoDropdown.classList.add('open');
+}
+function seleccionarDestino(valor) {
+    destinoInput.value = valor;
+    localStorage.setItem('stucv_destino', valor);
+    cerrarDropdown();
+}
+function cerrarDropdown() {
+    destinoDropdown.classList.remove('open');
+    activeIndex = -1;
+}
+
+destinoInput.addEventListener('input', function () {
+    localStorage.setItem('stucv_destino', this.value);
+    renderDropdown(this.value);
+});
+destinoInput.addEventListener('focus', function () { renderDropdown(this.value); });
+destinoInput.addEventListener('blur',  function () { setTimeout(cerrarDropdown, 150); });
+destinoInput.addEventListener('keydown', function (e) {
+    const items = destinoDropdown.querySelectorAll('.dropdown-item');
+    if (!items.length) {
+        if (e.key === 'Enter' && this.value.trim()) {
+            guardarDestino(this.value.trim()); cerrarDropdown();
+        }
+        return;
+    }
+    if      (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(activeIndex + 1, items.length - 1); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); activeIndex = Math.max(activeIndex - 1, -1); }
+    else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeIndex >= 0) seleccionarDestino(items[activeIndex].querySelector('.text').textContent.trim());
+        else if (this.value.trim()) { guardarDestino(this.value.trim()); cerrarDropdown(); }
+        return;
+    } else if (e.key === 'Escape') { cerrarDropdown(); return; }
+    items.forEach((it, i) => it.classList.toggle('active', i === activeIndex));
+    if (activeIndex >= 0) items[activeIndex].scrollIntoView({ block: 'nearest' });
+});
+document.addEventListener('click', function (e) {
+    if (!document.getElementById('destino-wrapper').contains(e.target)) cerrarDropdown();
+});
+
+// ════════════════════════════════════════════════
+//   INICIALIZACIÓN
+// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//   CALENDARIO DE FECHA
+// ════════════════════════════════════════════════
+const fechaInput = document.getElementById('fecha');
+
+function actualizarBtnFecha(valor) {
+    const btn = document.getElementById('btn-fecha-texto');
+    if (!valor) { btn.textContent = 'Seleccionar fecha'; return; }
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                   "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const [year, month, day] = valor.split('-');
+    btn.textContent = `${parseInt(day)} / ${meses[parseInt(month)-1]} / ${year}`;
+}
+
+function abrirCalendario() {
+    fechaInput.showPicker ? fechaInput.showPicker() : fechaInput.click();
+}
+
+fechaInput.addEventListener('change', function () {
+    actualizarBtnFecha(this.value);
+});
+
+// ════════════════════════════════════════════════
+//   RELOJ DE HORA DE SALIDA
+// ════════════════════════════════════════════════
+const horaInput = document.getElementById('hora');
+
+function actualizarBtnHora(valor) {
+    const btn = document.getElementById('btn-hora-texto');
+    if (!valor) { btn.textContent = 'Seleccionar hora'; return; }
+    const [hh, mm] = valor.split(':');
+    const h    = parseInt(hh);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12  = h % 12 || 12;
+    btn.textContent = `${h12}:${mm} ${ampm}`;
+}
+
+function abrirRelojSalida() {
+    horaInput.showPicker ? horaInput.showPicker() : horaInput.click();
+}
+
+function horaActualStr() {
+    const n = new Date();
+    const hh = String(n.getHours()).padStart(2, '0');
+    const mm = String(n.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+}
+
+horaInput.addEventListener('change', function () {
+    actualizarBtnHora(this.value);
+    localStorage.setItem('stucv_hora', this.value);
+});
+
+window.onload = function () {
+    const today = new Date().toISOString().split('T')[0];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === 'fecha') {
+            el.value = today;
+            actualizarBtnFecha(today);
+        } else {
+            const saved = localStorage.getItem('stucv_' + id);
+            if (saved) {
+                el.value = saved;
+                if (id === 'hora') actualizarBtnHora(saved);
+            } else if (id === 'hora') {
+                const horaActual = horaActualStr();
+                el.value = horaActual;
+                actualizarBtnHora(horaActual);
+            }
+        }
+        cargarHistorial(id);
+    });
+    const savedDestino = localStorage.getItem('stucv_destino');
+    if (savedDestino) destinoInput.value = savedDestino;
+    cargarContadores();
+};
+
+inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function () {
+        if (id !== 'fecha') localStorage.setItem('stucv_' + id, this.value);
+    });
+});
+
+// ════════════════════════════════════════════════
+//   HISTORIAL GENÉRICO
+// ════════════════════════════════════════════════
+function cargarHistorial(id) {
+    const datalist = document.getElementById('list-' + id);
+    if (!datalist) return;
+    const h = JSON.parse(localStorage.getItem('historial_' + id)) || [];
+    const existentes = Array.from(datalist.options).map(o => o.value);
+    const todos = [...new Set([...existentes, ...h])];
+    datalist.innerHTML = '';
+    todos.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; datalist.appendChild(opt);
+    });
+}
+function guardarHistorial(id, valor) {
+    if (!valor || !valor.trim()) return;
+    const key = 'historial_' + id;
+    let h = JSON.parse(localStorage.getItem(key)) || [];
+    if (!h.some(i => i.toLowerCase() === valor.toLowerCase())) {
+        h.push(valor);
+        localStorage.setItem(key, JSON.stringify(h));
+        cargarHistorial(id);
+    }
+}
+
+// ════════════════════════════════════════════════
+//   FORMATO FECHA Y HORA
+// ════════════════════════════════════════════════
+function formatearFecha(fechaStr) {
+    if (!fechaStr) return "PENDIENTE";
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                   "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const [year, month, day] = fechaStr.split('-');
+    return `${day} / ${meses[parseInt(month) - 1]} / ${year}`;
+}
+function formatearHora(horaStr) {
+    if (!horaStr) return "PENDIENTE";
+    if (!/^\d{1,2}:\d{2}$/.test(horaStr)) return horaStr;
+    const [hour, minute] = horaStr.split(':');
+    const h    = parseInt(hour);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12  = h % 12 || 12;
+    return `${h12}:${minute} ${ampm}`;
+}
+
+// ════════════════════════════════════════════════
+//   GENERAR REPORTE
+// ════════════════════════════════════════════════
+function obtenerTextoReporte() {
+    const allIds = [...inputs, 'destino'];
+    const v = {};
+    allIds.forEach(id => {
+        const el = document.getElementById(id);
+        v[id] = el ? el.value : '';
+    });
+
+    ['municipio','localidad','conductor','taxi','placas','marca','tipo']
+        .forEach(id => guardarHistorial(id, v[id]));
+    guardarDestino(v.destino);
+
+    const total = totalUsuarios();
+    const detalle = [
+        contadores.menores > 0 ? `${contadores.menores} Menor(es)` : '',
+        contadores.adultos > 0 ? `${contadores.adultos} Adulto(s)` : '',
+        contadores.mayores > 0 ? `${contadores.mayores} Mayor(es)` : '',
+    ].filter(Boolean).join(', ') || '0';
+
+    return `""SINDICATO DE TRABAJADORES UNIDOS DE LA COSTA DE VERACRUZ 
+STUCV""
+
+DE LA MANERA MAS ATENTA SOLICITO EL APOYO PARA UN VIAJE TURISTICO POR FAVOR .
+
+FECHA :   ${formatearFecha(v.fecha)} 
+HORA DE SALIDA : ${formatearHora(v.hora)} 
+DESTINO : ${v.destino.toUpperCase()} 
+CONDUCTOR : ${v.conductor} 
+TAXI No : ${v.taxi} 
+MUNICIPIO : ${v.municipio} 
+LOCALIDAD : ${v.localidad}
+PLACAS : ${v.placas.toUpperCase()} 
+MARCA : ${v.marca} 
+TIPO :  ${v.tipo} 
+USUARIOS : ${total} (${detalle}) 
+HORA DE REGRESO : ${v.regreso} 
+
+GRACIAS  POR LA COMPRESION , EXCELENTE DIA ...`;
+}
+
+// ════════════════════════════════════════════════
+//   COPIAR / WHATSAPP / LIMPIAR
+// ════════════════════════════════════════════════
+function copiarAlPortapapeles(texto) {
+    if (navigator.clipboard && window.isSecureContext)
+        return navigator.clipboard.writeText(texto);
+    return new Promise((resolve, reject) => {
+        const ta = document.createElement("textarea");
+        ta.value = texto;
+        Object.assign(ta.style, {
+            position:'fixed', top:'0', left:'0', width:'2em', height:'2em',
+            padding:'0', border:'none', outline:'none', background:'transparent'
+        });
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try { document.execCommand('copy') ? resolve() : reject(); }
+        catch(e) { reject(e); }
+        document.body.removeChild(ta);
+    });
+}
+function copiarReporte() {
+    const texto = obtenerTextoReporte();
+    copiarAlPortapapeles(texto)
+        .then(() => {
+            mostrarNotificacion();
+            document.getElementById('preview-area').style.display = 'none';
+            resetearDatosViaje();
+        })
+        .catch(() => {
+            const p = document.getElementById('preview-area');
+            p.textContent = texto; p.style.display = 'block';
+            alert("Tu dispositivo bloqueó el copiado. Mantén presionado el texto gris para copiarlo.");
+        });
+}
+function enviarWhatsApp() {
+    const texto = obtenerTextoReporte();
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+    resetearDatosViaje();
+}
+function mostrarNotificacion() {
+    const n = document.getElementById('notification');
+    n.style.display = 'block';
+    setTimeout(() => { n.style.display = 'none'; }, 3000);
+}
+function resetearDatosViaje() {
+    const today = new Date().toISOString().split('T')[0];
+    // Fecha
+    document.getElementById('fecha').value = today;
+    actualizarBtnFecha(today);
+    // Hora
+    const horaReset = horaActualStr();
+    document.getElementById('hora').value = horaReset;
+    actualizarBtnHora(horaReset);
+    localStorage.setItem('stucv_hora', horaReset);
+    // Destino
+    destinoInput.value = '';
+    localStorage.removeItem('stucv_destino');
+    // Contadores
+    ['menores','adultos','mayores'].forEach(t => {
+        contadores[t] = 0;
+        document.getElementById('val-' + t).textContent = '0';
+        localStorage.setItem('stucv_' + t, '0');
+    });
+    // Regreso
+    regresoInput.value = 'Al finalizar actividades';
+    localStorage.setItem('stucv_regreso', 'Al finalizar actividades');
+}
+function limpiarFormulario() {
+    if (confirm("¿Seguro que quieres borrar los datos del viaje?\n(Se conservarán tus datos de Taxi y Conductor)")) {
+        destinoInput.value = '';
+        localStorage.removeItem('stucv_destino');
+        ['menores','adultos','mayores'].forEach(t => {
+            contadores[t] = 0;
+            document.getElementById('val-' + t).textContent = '0';
+            localStorage.setItem('stucv_' + t, '0');
+        });
+        regresoInput.value = 'Al finalizar actividades';
+        localStorage.setItem('stucv_regreso', 'Al finalizar actividades');
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+        document.getElementById('preview-area').style.display = 'none';
+    }
+}
+</script>
+</body>
+</html>
