@@ -1,0 +1,21 @@
+{
+  "name": "reporte-taxi",
+  "version": "1.0.0",
+  "description": "App de reporte de taxi con Capacitor",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Build completado'",
+    "cap": "cap"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
